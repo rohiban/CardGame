@@ -1,27 +1,36 @@
+from Cards import Card
+
+
 class Suites(object):
 	SPADE="Spade"
 	CLUB="Club"
 	DIAMOND="Diamond"
 	HEART="Heart"
-	
+
+
 class BestCriteria(object):
 	VALUE="Sum of Value"
 	COUNT="Card Count"
 
+
 class WhoPlaysNext(object):
 	SEQUENCE="Sequence of Players"
 	WINNER="Previous hand's Winner"
-	
+
+
 class WhoDealsNext(WhoPlaysNext):
 	LOSER="Previous hand's Loser"
+
 
 class CardDistribution(object):
 	ONEATATIME="One card at a time"
 	MULTIATATIME="Multiple cards at a time"
 
+
 class GameRules(object):
 	def printIt(self):
 		pass
+
 
 class CardGameRules(GameRules):
 	def __init__(self):
@@ -34,7 +43,7 @@ class CardGameRules(GameRules):
 		pass
 
 	def isAceMax(self):
-		pass
+		return True
 		
 	def rankFunction(self, left, right):
 		pass
@@ -43,14 +52,17 @@ class CardGameRules(GameRules):
 		pass
 		
 	def isTrumpApplicable(self):
-		pass
-		
+		return False
+
 	def whoStartsNextHand(self):
 		pass
-		
+
 	def whoDealsNextHand(self):
 		pass
-		
+
+	def noOfCardsToDealToAPlayer(self):
+		return 1
+
 	def determineWinningCard(self, hand):
 		pass
 
@@ -66,10 +78,11 @@ class CardGameRules(GameRules):
 	def printIt(self):
 		pass
 
+
 class GadhaLotanRules(CardGameRules):
-	def __init__(self, card):
+	def __init__(self):
 		super(GadhaLotanRules, self).__init__()
-		self.startCard = card
+		self.startCard = Card(Suites.SPADE, 1)
 		
 	def startingCard(self):
 		return self.startCard
@@ -95,10 +108,11 @@ class GadhaLotanRules(CardGameRules):
 		else:
 			return False
 
+
 class RummyRules(CardGameRules):
 	def __init__(self, card):
 		super(RummyRules, self).__init__()
-		self.startCard = card
+		self.startCard = None
 		self.trumpSuite = ""
 
 	def setTrump(self, suite):
@@ -173,17 +187,20 @@ class RummyRules(CardGameRules):
 
 	def whoDealsNextHand(self):
 		return WhoDealsNext.WINNER
-	
+
+	def noOfCardsToDealToAPlayer(self):
+		return 4
+
 	def printIt(self):
-		if isAceMax():
+		if self.isAceMax():
 			aceRule = "Max"
 		else:
 			aceRule = "Min"
 				
 		print "Starting card is %s" %self.startCard.toString()
-		print "Best suite criteria is %s" %bestSuiteCriteria()
-		print "Trump applicable = %r, and Ace is considered %s" %(isTrumpApplicable(), aceRule)
-		print "Next hand start by : %s, Next hand dealer : %s" %(whoStartsNextHand(), whoDealsNextHand())
+		print "Best suite criteria is %s" %self.bestSuiteCriteria()
+		print "Trump applicable = %r, and Ace is considered %s" %(self.isTrumpApplicable(), aceRule)
+		print "Next hand start by : %s, Next hand dealer : %s" %(self.whoStartsNextHand(), self.whoDealsNextHand())
 
 #class RuleUser(object):
 #	def __init__(self, someRules):

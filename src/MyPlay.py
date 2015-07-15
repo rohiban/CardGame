@@ -1,5 +1,4 @@
 from CardGame import *
-from Cards import *
 from Player import *
 from CardGameRules import *
 
@@ -14,9 +13,9 @@ players.append(CardPlayer("Laddoo"))
 
 # start the game
 #rummy = Rummy(players, FullDeck())
-#rummy.setRules(RummyRules(Card(Suites.SPADE, 1)))
+#rummy.setRules(RummyRules())
 #rummy.beginPlay()
 
-lotan = GadhaLotan(players, FullDeck())
-lotan.setRules(GadhaLotanRules(Card(Suites.SPADE, 1)))
+lotan = GadhaLotan(players, FullDeck(), GadhaLotanRules())
+#lotan.setRules(GadhaLotanRules())
 lotan.beginPlay()

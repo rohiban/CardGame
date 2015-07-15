@@ -2,31 +2,43 @@ import random
 from CardGameRules import *
 from Cards import *
 
+
 class Game(object):
 	def __init__(self, players):
 		self.players = players
 		self.no_of_players = len(players)
-		
-	def beginPlay(self):
-		pass
 
-class CardGame(Game):
-	def __init__(self, players, cardDeck):
-		super(CardGame, self).__init__(players)
-		self.card_deck = cardDeck
-		self.rules = None
-		self.unused_cards = None
+	def beginPlay(self):
+		return NotImplemented
 
 	def setRules(self, rules):
 		self.rules = rules
+
+	def getRules(self):
+		return self.rules
+
+
+class CardGame(Game):
+	def __init__(self, players, cardDeck, rules):
+		super(CardGame, self).__init__(players)
+		self.card_deck = cardDeck
+		self.rules = rules
+		self.unused_cards = None
+
+	#def setRules(self, rules):
+	#	self.rules = rules
 		
 	def getRules(self):
 		return self.rules
 
 	def distributeHand(self, noOfCardsToDistribute):
+		cardsInOneChunk = self.rules.noOfCardsToDealToAPlayer()
 		for i in range(noOfCardsToDistribute):
 			for p in self.players:
-				p.takeACard(self.card_deck.drawACard())
+				if cardsInOneChunk == 1:
+					p.takeACard(self.card_deck.drawACard())
+				else:
+					p.takeCards(self.card_deck.drawCards(cardsInOneChunk))
 		return self.card_deck
 
 	def dealCards(self, cardsPerPlayer):
@@ -36,7 +48,7 @@ class CardGame(Game):
 		return 0
 
 	def winningCard(self, rules):
-		pass
+		return NotImplemented
 
 	def shuffleTheDeck(self):
 		self.card_deck.shuffle()
@@ -57,21 +69,20 @@ class CardGame(Game):
 		#determine points for each player
 		#declare the winner of the game
 		#
-		pass
+		return NotImplemented
 
 	def nextPlayerIndex(self, currIndex, delta=1):
 		currIndex += delta
 		if currIndex > (self.no_of_players-1):
 			currIndex -= self.no_of_players
-			
 		return currIndex
 
 	def playAHand(self, startPos):
-		pass
+		return NotImplemented
 
 class GadhaLotan(CardGame):
-	def __init__(self, players, deck):
-		super(GadhaLotan, self).__init__(players, deck)
+	def __init__(self, players, deck, rules):
+		super(GadhaLotan, self).__init__(players, deck, rules)
 		self.used_cards = SetOfCards()
 
 	def playersWithCardsInHand(self):
@@ -82,7 +93,7 @@ class GadhaLotan(CardGame):
 		return count
 
 	def beginPlay(self):
-		rules = self.getRules()
+		#rules = self.getRules()
 		
 		no_of_cards = 13
 		self.initialize(no_of_cards)
@@ -148,6 +159,7 @@ class GadhaLotan(CardGame):
 			#if (hand > 25):
 			#	break
 
+
 class Rummy(CardGame):
 	def __init__(self, players, deck):
 		super(Rummy, self).__init__(players, deck)
@@ -156,7 +168,7 @@ class Rummy(CardGame):
 		#self.unused_cards = None
 
 	def getTrumpSuite(self):
-		return trumpSuite
+		return self.trumpSuite
 	
 	def beginPlay(self):
 		trumpDeclared = False

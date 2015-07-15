@@ -1,6 +1,7 @@
 import random
 from CardGameRules import *
 
+
 class Card(object):
 	def __init__(self, suite, value):
 		self.value = value
@@ -24,7 +25,7 @@ class Card(object):
 		return self.value
 	
 	def isOfSameSuite(self, card):
-		return (self.suite == card.suite)
+		return self.suite == card.suite
 	
 	def isSame(self, card):
 		return (self.value == card.value) & (self.suite == card.suite)
@@ -33,20 +34,21 @@ class Card(object):
 		return (self.suite == card.suite) & (self.value > card.value)
 		
 	def isHigherValue(self, card):
-		return (self.value > card.value)
+		return self.value > card.value
 
 #	def __cmp__(self, other):
 #		return self.value.__cmp__(other.value)
 
 	def isAce(self):
-		return (self.value == 1)
+		return self.value == 1
 		
 	def printIt(self):
 		print "(%s,%s)" %(self.suite, self.label)
 		
 	def toString(self):
 		return "(" + self.suite + "," + self.label + ")"
-	
+
+
 class SetOfCards(object):
 	def __init__(self):
 		self.cards = []
@@ -59,6 +61,15 @@ class SetOfCards(object):
 
 	def drawACard(self):
 		return self.cards.pop(self.cardCount()-1)
+
+	def drawCards(self, count):
+		if count == 1:
+			return self.drawACard()
+		else:
+			myCards = []
+			for i in range(count):
+				myCards.append(self.drawACard())
+			return myCards
 
 	def throwARandomCard(self):
 		return self.cards.pop(random.randint(0, self.cardCount()-1))
@@ -129,6 +140,7 @@ class SetOfCards(object):
 	def printIt(self):
 		print self.toString()
 
+
 class Hand(SetOfCards):
 	def __init__(self):
 		super(Hand, self).__init__()
@@ -163,7 +175,8 @@ class Hand(SetOfCards):
 
 	def getTopCard(self):
 		return self.cards[self.cardCount()-1]
-		
+
+
 class FullDeck(SetOfCards):
 	def __init__(self):
 		self.no_of_cards = 52
