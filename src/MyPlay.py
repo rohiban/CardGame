@@ -1,15 +1,12 @@
-from CardGame import *
-from Player import *
-from CardGameRules import *
+from CardGame import GadhaLotan, Rummy
+from CardPlayer import CardPlayer
+from CardGameRules import GadhaLotanRules, RummyRules
+from Cards import FullDeck
 
 # the MAIN body
 
 # create four card-players		
-players = []
-players.append(CardPlayer("Shwetha"))
-players.append(CardPlayer("Aman"))
-players.append(CardPlayer("Shashank"))
-players.append(CardPlayer("Laddoo"))
+players = [CardPlayer("Shwetha"), CardPlayer("Aman"), CardPlayer("Shashank"), CardPlayer("Laddoo")]
 
 # start the game
 #rummy = Rummy(players, FullDeck())
