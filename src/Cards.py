@@ -1,5 +1,13 @@
 import random
-from CardGameRules import *
+
+__author__ = 'rbansal'
+
+
+class Suites(object):
+    SPADE="Spade"
+    CLUB="Club"
+    DIAMOND="Diamond"
+    HEART="Heart"
 
 
 class Card(object):
@@ -131,6 +139,10 @@ class SetOfCards(object):
                 val += card.getValue()
         return val
 
+    def bestSuite(self, rules):
+
+        pass
+
     def toString(self):
         s = ""
         for card in self.cards:
@@ -161,6 +173,7 @@ class Hand(SetOfCards):
 
     def winningCardPos(self, rules):
         i = 0
+        winPos = 0
         for card in self.cards:
             if i == 0:
                 winner, winPos = card, i

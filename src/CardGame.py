@@ -1,6 +1,8 @@
-import random
+#import random
 from CardGameRules import GadhaLotanRules
-from Cards import Card, SetOfCards
+from Cards import Card, SetOfCards, Hand
+
+__author__ = 'rbansal'
 
 
 class Game(object):
@@ -25,11 +27,16 @@ class CardGame(Game):
         self.rules = rules
         self.unused_cards = None
 
-    #def setRules(self, rules):
-    #	self.rules = rules
-
+    # simple getter, do we need it ?
     def getRules(self):
         return self.rules
+
+    # find player with a given card
+    def playerWithCard(self, card):
+        for p in self.players:
+            if p.hasCard(card):
+                return p
+        return None
 
     def distributeHand(self, noOfCardsToDistribute):
         cardsInOneChunk = self.rules.noOfCardsToDealToAPlayer()
@@ -80,6 +87,7 @@ class CardGame(Game):
     def playAHand(self, startPos):
         return NotImplemented
 
+
 class GadhaLotan(CardGame):
     def __init__(self, players, deck, rules):
         super(GadhaLotan, self).__init__(players, deck, rules)
@@ -93,81 +101,144 @@ class GadhaLotan(CardGame):
         return count
 
     def beginPlay(self):
-        #rules = self.getRules()
-
         no_of_cards = self.rules.maxCountAfterDealing()
         self.initialize(no_of_cards)
 
         # initialize the played hand variable
         playedHand = Hand()
 
+        # print the hands of all players (for debugging)
         for p in self.players:
             p.printIt()
             p.printYourHand()
 
-        # person with the Leading card starts
+        # person with the leading card starts
         startPos = self.rules.startingPlayerPos(self.players)
 
-        suite = self.rules.startingCard().getSuite()
+        # which player has Ace of Spade [starting card]
+        # p = self.playerWithCard(self.rules.startingCard())
+
+        # suite = self.rules.startingCard().getSuite()
         hand = 0
         loading = False
 
+        # continue as long as there is more than one player, holding cards in hand
         while self.playersWithCardsInHand() != 1:
 
+            # iterate over all players
             for i in range(self.no_of_players):
 
+                # get the player
                 p = self.players[startPos]
+
+                # if a player has finished the cards, declare it
                 if p.noOfCardsInHand() == 0:
                     p.printIt(),
                     print " is the winner"
                     continue
 
-                if (hand == 0) & (i == 0):
-                    card = p.playTHECard(self.rules.startingCard())
-                else:
-                    card = p.playACard(suite)
+                # determine the suite
+                # if i == 0:
+                #    suite = p.selectASuite(self.rules)
 
-                if card is None:
-                    card = p.playARandomCard()
-                    if i != 0: # more than one player has played
-                        loading = True
-                        winPos = playedHand.winningCardPos(rules)
-                    else:
+                if hand == 0:  # first hand, suite can't change
+                    if i == 0:  # first player plays the starting card
+                        card = p.playTHECard(self.rules.startingCard())
                         suite = card.getSuite()
+                    else:  # second player onwards
+                        if p.hasCardOfSuite(suite):
+                            card = p.playACard(suite)
+                        else:  # no loading can happen on first hand
+                            card = p.playARandomCard()
+                else:  # suite can be decided
+                    if i == 0:  # first player
+                        suite = p.selectASuite(self.rules)
+                        card = p.playACard(suite)
+                    else:  # second player onwards
+                        if p.hasCardOfSuite(suite):
+                            card = p.playACard(suite)
+                        else:  # loading happens
+                            loading = True
+                            winPos = playedHand.winningCardPos(self.rules)
 
+                            # let the player select a new suite
+                            card = p.playACard(p.selectASuite(self.rules))
+                            suite = card.getSuite()
+
+                # if (hand == 0) & (i == 0):  # first hand and first player
+                #     card = p.playTHECard(self.rules.startingCard())
+                #     suite = card.getSuite()
+                # else:
+                #     # check if the player has this suite's card
+                #     if p.hasCardOfSuite(suite):
+                #         card = p.playACard(suite)
+                #     else:
+                #         # if this is first hand, then player can throw a random card
+                #         if hand == 0:
+                #             card = p.playARandomCard()
+                #         else:
+                #             # loading happens
+                #             loading = True
+                #             winPos = playedHand.winningCardPos(self.rules)
+                #
+                #             # ask the player to select a suite
+                #             suite = p.selectASuite(self.rules)
+                #             card = p.playACard(suite)
+
+                # if card is None:  # when player doesn't have a card of the suite
+                #     card = p.playARandomCard()
+                #     if i != 0:  # more than one player has played
+                #         # if this is first hand then no loading can happen
+                #         if hand != 0:
+                #             loading = True
+                #             winPos = playedHand.winningCardPos(self.rules)
+                #     else:
+                #         suite = card.getSuite()
+
+                # add the played card to the deck
                 playedHand.addACard(card)
 
+                # determine the starting position of next player
                 if loading:
                     loadedPlayerPos = self.nextPlayerIndex(self.nextPlayerIndex(startPos) + (self.no_of_players-1 - i), winPos)
-                    #print "startpos = %d, winPos = %d, loadedPlayerPos = %d" %(startPos, winPos, loadedPlayerPos)
+                    # print "startpos = %d, winPos = %d, loadedPlayerPos = %d" %(startPos, winPos, loadedPlayerPos)
                     break
                 else:
                     startPos = self.nextPlayerIndex(startPos)
 
+            # for debugging
             playedHand.printIt()
-            suite = playedHand.getTopCard().getSuite()
 
+            # determine the suite for next hand - this is incorrect
+            # suite = playedHand.getTopCard().getSuite()
+
+            # prepare to start the next hand
             if loading:
                 self.players[loadedPlayerPos].getCardsInHand().mergeWith(playedHand)
+
+                # for debugging
                 self.players[loadedPlayerPos].printIt()
                 self.players[loadedPlayerPos].printYourHand()
                 loading = False
             else :
-                winPos = playedHand.winningCardPos(rules)
+                winPos = playedHand.winningCardPos(self.rules)
                 self.used_cards.mergeWith(playedHand)
                 startPos = self.nextPlayerIndex(startPos, winPos)
 
+            # move to the subsequent hand
             hand += 1
-            #if (hand > 25):
+
+            # if (hand > 25):
             #	break
 
 
 class Rummy(CardGame):
     def __init__(self, players, deck):
         super(Rummy, self).__init__(players, deck)
+        self.trumpSuite = None
 
         self.used_cards = SetOfCards()
-        #self.unused_cards = None
+        # self.unused_cards = None
 
     def getTrumpSuite(self):
         return self.trumpSuite

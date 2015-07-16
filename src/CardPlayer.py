@@ -1,4 +1,4 @@
-from CardGame.src.Cards import SetOfCards
+from Cards import SetOfCards
 
 __author__ = 'rbansal'
 
@@ -28,8 +28,8 @@ class CardPlayer(Player):
     def playTHECard (self, card):
         return self.cards.throwTHECard(card)
 
-    def getBestSuite(self, rules):
-        return self.cards.bestSuite(rules)
+    def selectASuite(self, rules):
+        return rules.bestSuite(self.cards)
 
     def playACard(self, ofSuite):
         return self.cards.throwACard(ofSuite)
@@ -39,6 +39,9 @@ class CardPlayer(Player):
 
     def hasCard(self, card):
         return self.cards.hasCard(card)
+
+    def hasCardOfSuite(self, ofSuite):
+        return self.cards.noOfCards(ofSuite) > 0
 
     def printYourHand(self):
         print self.cards.toString()

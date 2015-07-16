@@ -1,11 +1,6 @@
-from Cards import Card
+from Cards import Card, Suites
 
-
-class Suites(object):
-    SPADE="Spade"
-    CLUB="Club"
-    DIAMOND="Diamond"
-    HEART="Heart"
+__author__ = 'rbansal'
 
 
 class BestCriteria(object):
@@ -48,7 +43,7 @@ class CardGameRules(GameRules):
     def rankFunction(self, left, right):
         pass
 
-    def bestSuiteCriteria(self):
+    def bestSuite(self, cards):
         pass
 
     def isTrumpApplicable(self):
@@ -76,7 +71,7 @@ class CardGameRules(GameRules):
                 return startPos
             else:
                 startPos += 1
-        return startPos
+        return -1
 
     def printIt(self):
         pass
@@ -113,6 +108,16 @@ class GadhaLotanRules(CardGameRules):
 
     def maxCountAfterDealing(self):
         return 13
+
+    def bestSuite(self, cards):
+        winSuite = Suites.SPADE
+        winCount = cards.noOfCards(winSuite)
+        for s in [Suites.CLUB, Suites.DIAMOND, Suites.HEART]:
+            count = cards.noOfCards(s)
+            if winCount < count:
+                winCount = count
+                winSuite = s
+        return winSuite
 
 class RummyRules(CardGameRules):
     def __init__(self, card):
