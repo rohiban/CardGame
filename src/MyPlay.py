@@ -9,7 +9,7 @@ __author__ = 'rbansal'
 # the MAIN body
 
 # create four card-players		
-players = [CardPlayer("Shwetha"), CardPlayer("Aman"), CardPlayer("Shashank"), CardPlayer("Laddoo")]
+players = [CardPlayer("Aman"), CardPlayer("Laddoo"), CardPlayer("Shashank"), CardPlayer("Varun")]
 
 # start the game
 #rummy = Rummy(players, FullDeck(), RummyRules())

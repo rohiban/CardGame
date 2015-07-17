@@ -118,12 +118,12 @@ class GadhaLotan(CardGame):
         # which player has Ace of Spade [starting card]
         # p = self.playerWithCard(self.rules.startingCard())
 
-        # suite = self.rules.startingCard().getSuite()
+        suite = None
         hand = 0
         loading = False
 
         # continue as long as there is more than one player, holding cards in hand
-        while self.playersWithCardsInHand() != 1:
+        while self.playersWithCardsInHand() > 1:
 
             # iterate over all players
             for i in range(self.no_of_players):
@@ -133,16 +133,17 @@ class GadhaLotan(CardGame):
 
                 # if a player has finished the cards, declare it
                 if p.noOfCardsInHand() == 0:
-                    p.printIt(),
-                    print " is the winner"
+                    # for debugging
+                    print "Winner is ... ",
+                    p.printIt()
+
+                    # shift to next player
+                    startPos = self.nextPlayerIndex(startPos)
+
                     continue
 
-                # determine the suite
-                # if i == 0:
-                #    suite = p.selectASuite(self.rules)
-
                 if hand == 0:  # first hand, suite can't change
-                    if i == 0:  # first player plays the starting card
+                    if suite is None:  # first player plays the starting card
                         card = p.playTHECard(self.rules.startingCard())
                         suite = card.getSuite()
                     else:  # second player onwards
@@ -151,10 +152,10 @@ class GadhaLotan(CardGame):
                         else:  # no loading can happen on first hand
                             card = p.playARandomCard()
                 else:  # suite can be decided
-                    if i == 0:  # first player
+                    if suite is None:  # suite is not decided for the hand
                         suite = p.selectASuite(self.rules)
                         card = p.playACard(suite)
-                    else:  # second player onwards
+                    else:  # suite is already decided for the hand
                         if p.hasCardOfSuite(suite):
                             card = p.playACard(suite)
                         else:  # loading happens
@@ -201,7 +202,7 @@ class GadhaLotan(CardGame):
                 # determine the starting position of next player
                 if loading:
                     loadedPlayerPos = self.nextPlayerIndex(self.nextPlayerIndex(startPos) + (self.no_of_players-1 - i), winPos)
-                    # print "startpos = %d, winPos = %d, loadedPlayerPos = %d" %(startPos, winPos, loadedPlayerPos)
+                    print "startpos = %d, winPos = %d, loadedPlayerPos = %d" %(startPos, winPos, loadedPlayerPos)
                     break
                 else:
                     startPos = self.nextPlayerIndex(startPos)
@@ -209,16 +210,20 @@ class GadhaLotan(CardGame):
             # for debugging
             playedHand.printIt()
 
-            # determine the suite for next hand - this is incorrect
-            # suite = playedHand.getTopCard().getSuite()
-
             # prepare to start the next hand
             if loading:
+                # loaded player has to pick the hand up
                 self.players[loadedPlayerPos].getCardsInHand().mergeWith(playedHand)
 
+                # the player who did the loading should start the next hand =>
+                # so no need to change the startPos variable
+
                 # for debugging
+                print "Got LOADED ... ",
                 self.players[loadedPlayerPos].printIt()
                 self.players[loadedPlayerPos].printYourHand()
+
+                # reset the variable
                 loading = False
             else :
                 winPos = playedHand.winningCardPos(self.rules)
@@ -226,6 +231,7 @@ class GadhaLotan(CardGame):
                 startPos = self.nextPlayerIndex(startPos, winPos)
 
             # move to the subsequent hand
+            suite = None
             hand += 1
 
             # if (hand > 25):
