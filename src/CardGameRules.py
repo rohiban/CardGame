@@ -95,6 +95,9 @@ class GadhaLotanRules(CardGameRules):
         return WhoPlaysNext.WINNER
 
     def rankFunction(self, left, right):
+        if left.isSame(right):
+            return False
+
         if left.isOfSameSuite(right):
             if self.isAceMax():
                 if left.isAce():
