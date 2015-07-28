@@ -11,13 +11,15 @@ __author__ = 'rbansal'
 # create four card-players		
 players = [CardPlayer("Jinesh"), CardPlayer("Laddoo"), CardPlayer("Shashank"), CardPlayer("Sunder")]
 
-# start the game
-#rummy = Rummy(players, FullDeck(), RummyRules())
-#rummy.beginPlay()
-
 # set the rule
 rule = GadhaLotanRules()
-rule.setBestSuiteCriteria(BestCriteria.VALUE)
+# rule = RummyRules()
 
-lotan = GadhaLotan(players, FullDeck(), rule)
-lotan.beginPlay()
+rule.setBestSuiteCriteria(BestCriteria.COUNT)
+
+# set the game
+game = GadhaLotan(players, FullDeck(), rule)
+# game = Rummy(players, FullDeck(), rule)
+
+# start the game
+game.beginPlay()
