@@ -8,8 +8,10 @@ class Player(object):
         self.name = name
 
     def printIt(self):
-        print "%s" %self.name
+        print "%s" % self.name
 
+    def isSame(self, p):
+        return self.name == p.name
 
 class CardPlayer(Player):
     def __init__(self, name):

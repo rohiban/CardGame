@@ -4,22 +4,22 @@ __author__ = 'rbansal'
 
 
 class BestCriteria(object):
-    VALUE="Sum of Value"
-    COUNT="Card Count"
+    VALUE = "Sum of Value"
+    COUNT = "Card Count"
 
 
 class WhoPlaysNext(object):
-    SEQUENCE="Sequence of Players"
-    WINNER="Previous hand's Winner"
+    SEQUENCE = "Sequence of Players"
+    WINNER = "Previous hand's Winner"
 
 
 class WhoDealsNext(WhoPlaysNext):
-    LOSER="Previous hand's Loser"
+    LOSER = "Previous hand's Loser"
 
 
 class CardDistribution(object):
-    ONEATATIME="One card at a time"
-    MULTIATATIME="Multiple cards at a time"
+    ONEATATIME = "One card at a time"
+    MULTIATATIME = "Multiple cards at a time"
 
 
 class GameRules(object):
@@ -30,6 +30,7 @@ class GameRules(object):
 class CardGameRules(GameRules):
     def __init__(self):
         super(CardGameRules, self).__init__()
+        self.criterion = None
 
     def startingSuite(self):
         pass
@@ -42,6 +43,9 @@ class CardGameRules(GameRules):
 
     def rankFunction(self, left, right):
         pass
+
+    def setBestSuiteCriteria(self, c):
+        self.criterion = c
 
     def bestSuite(self, cards):
         pass
@@ -113,14 +117,28 @@ class GadhaLotanRules(CardGameRules):
         return 13
 
     def bestSuite(self, cards):
-        winSuite = Suites.SPADE
-        winCount = cards.noOfCards(winSuite)
-        for s in [Suites.CLUB, Suites.DIAMOND, Suites.HEART]:
-            count = cards.noOfCards(s)
-            if winCount < count:
-                winCount = count
-                winSuite = s
-        return winSuite
+        if self.criterion == BestCriteria.COUNT:
+            suiteList = [(cards.noOfCards(suite), suite)
+                          for suite in [Suites.SPADE, Suites.CLUB,
+                                        Suites.DIAMOND, Suites.HEART]]
+        elif self.criterion == BestCriteria.VALUE:
+            suiteList = [(cards.sumOfValue(suite), suite)
+                          for suite in [Suites.SPADE, Suites.CLUB,
+                                        Suites.DIAMOND, Suites.HEART]]
+        else:
+            return None
+
+        for x, suite in sorted(suiteList, reverse=True):
+            return suite
+
+        # winSuite = Suites.SPADE
+        # winCount = cards.noOfCards(winSuite)
+        # for s in [Suites.CLUB, Suites.DIAMOND, Suites.HEART]:
+        #     count = cards.noOfCards(s)
+        #     if winCount < count:
+        #         winCount = count
+        #         winSuite = s
+        # return winSuite
 
 class RummyRules(CardGameRules):
     def __init__(self, card):

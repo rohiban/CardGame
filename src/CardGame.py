@@ -13,11 +13,11 @@ class Game(object):
     def beginPlay(self):
         return NotImplemented
 
-    def setRules(self, rules):
-        self.rules = rules
-
-    def getRules(self):
-        return self.rules
+    # def setRules(self, rules):
+    #     self.rules = rules
+    #
+    # def getRules(self):
+    #     return self.rules
 
 
 class CardGame(Game):
@@ -63,7 +63,7 @@ class CardGame(Game):
     def initialize(self, cardsPerPlayer):
         self.shuffleTheDeck()
         self.dealCards(cardsPerPlayer)
-        #self.dealCards(floor(self.card_deck.cardCount() / len(self.players)))
+        # self.dealCards(floor(self.card_deck.cardCount() / len(self.players)))
 
     def beginPlay(self):
         return NotImplemented
@@ -76,12 +76,10 @@ class CardGame(Game):
 
     # get the next player given a player
     def nextPlayer(self, p):
-        i = 0
-        for player in self.players:
-            if player.name == p.name:
-                return self.players[(i+1) % self.no_of_players]
-            else:
-                i += 1
+        for i, player in enumerate(self.players):
+            if p.isSame(player):
+                return self.players[(i + 1) % self.no_of_players]
+
         return None
 
     def playAHand(self, startPos):
@@ -166,6 +164,9 @@ class GadhaLotan(CardGame):
                 if loading:
                     break
 
+                # for debugging
+                # print "hand = %d, i = %d" %(hand, i)
+
                 # determine the winning card, SO FAR
                 if self.rules.rankFunction(card, winningCard):
                     winningCard = card
@@ -205,8 +206,8 @@ class GadhaLotan(CardGame):
         loser.printYourHand()
 
 class Rummy(CardGame):
-    def __init__(self, players, deck):
-        super(Rummy, self).__init__(players, deck)
+    def __init__(self, players, deck, rules):
+        super(Rummy, self).__init__(players, deck, rules)
         self.trumpSuite = None
 
         self.used_cards = SetOfCards()
@@ -217,7 +218,6 @@ class Rummy(CardGame):
 
     def beginPlay(self):
         trumpDeclared = False
-        rules = self.getRules()
 
         no_of_cards = 13
         self.initialize(no_of_cards)
@@ -225,20 +225,27 @@ class Rummy(CardGame):
         # initialize the hand
         playedHand = Hand()
 
+        # for debugging
         for p in self.players:
             p.printIt()
             p.printYourHand()
 
         # person with the Leading card starts
         startPos = self.rules.startingPlayerPos(self.players)
+        p = self.players[startPos]
 
         suite = self.rules.startingCard().getSuite()
+
+
+
         for hand in range(no_of_cards):
             # play a new hand
             print "# %d" %(hand+1)
 
+            # loop as many times as number of players
             for i in range(self.no_of_players):
-                p = self.players[startPos]
+
+                # p = self.players[startPos]
 
                 if (hand == 0) & (i == 0):
                     card = p.playTHECard(self.rules.startingCard())
@@ -248,21 +255,29 @@ class Rummy(CardGame):
                 while card is None:
                     if not trumpDeclared:
                         trumpSuite = self.rules.determineTrump(p.getCardsInHand())
+                        self.rules.setTrump(trumpSuite)
                         trumpDeclared = True
+
+                        # for debugging
                         print "Trump is %s" %trumpSuite
-                        rules.setTrump(trumpSuite)
-                    card = p.playACard(trumpSuite)
-                    if card is None:
+
+                    if p.hasCardOfSuite(trumpSuite):
+                        card = p.playACard(trumpSuite)
+                    else:
                         card = p.playARandomCard()
 
+                # add the card to the played hand
                 playedHand.addACard(card)
 
-                startPos = self.nextPlayerIndex(startPos)
+                # select the next player
+                # startPos = self.nextPlayerIndex(startPos)
+                p = self.nextPlayer(p)
 
+            # for debugging
             playedHand.printIt()
 
-            winPos = playedHand.winningCardPos(rules)
+            winPos = playedHand.winningCardPos(self.rules)
             startPos = self.nextPlayerIndex(startPos, winPos)
 
-            suite = playedHand.getTopCard().getSuite()
+            # suite = playedHand.getTopCard().getSuite()
             self.used_cards.mergeWith(playedHand)

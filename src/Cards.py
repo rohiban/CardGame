@@ -74,10 +74,11 @@ class SetOfCards(object):
         if count == 1:
             return self.drawACard()
         else:
-            myCards = []
-            for i in range(count):
-                myCards.append(self.drawACard())
-            return myCards
+            return [self.drawACard() for i in range(count)]
+            # myCards = []
+            # for i in range(count):
+            #     myCards.append(self.drawACard())
+            # return myCards
 
     def throwARandomCard(self):
         return self.cards.pop(random.randint(0, self.cardCount()-1))
@@ -93,14 +94,12 @@ class SetOfCards(object):
         return None
 
     def throwTHECard(self, card):
-        i = 0
-        for c in self.cards:
+        # i = 0
+        for i, c in enumerate(self.cards):
             if c.isSame(card):
                 return self.cards.pop(i)
-            else:
-                i += 1
-
-        return None
+            # else:
+            #     i += 1
 
     def throwAMaxCard(self, ofSuite):
         pass
@@ -119,25 +118,28 @@ class SetOfCards(object):
             self.addACard(additionalSetOfCards.drawACard())
 
     def hasCard(self, card):
-        if len(self.cards) > 0:
-            for c in self.cards:
-                if c.isSame(card):
-                    return True
-        return False
+        return any(filter(lambda c: c.isSame(card), self.cards))
+        # if len(self.cards) > 0:
+        #     for c in self.cards:
+        #         if c.isSame(card):
+        #             return True
+        # return False
 
     def noOfCards(self, ofSuite):
-        count = 0
-        for card in self.cards:
-            if card.getSuite() == ofSuite:
-                count += 1
-        return count
+        return len([card for card in self.cards if card.getSuite() == ofSuite])
+        # count = 0
+        # for card in self.cards:
+        #     if card.getSuite() == ofSuite:
+        #         count += 1
+        # return count
 
     def sumOfValue(self, ofSuite):
-        val = 0
-        for card in self.cards:
-            if card.getSuite() == ofSuite:
-                val += card.getValue()
-        return val
+        return sum([card.getValue() for card in self.cards if card.getSuite() == ofSuite])
+        # val = 0
+        # for card in self.cards:
+        #     if card.getSuite() == ofSuite:
+        #         val += card.getValue()
+        # return val
 
     def bestSuite(self, rules):
 
@@ -194,6 +196,10 @@ class FullDeck(SetOfCards):
     def __init__(self):
         self.no_of_cards = 52
         super(FullDeck, self).__init__()
-        for suite in [Suites.SPADE, Suites.CLUB, Suites.DIAMOND, Suites.HEART]:
-            for value in range(13):
-                super(FullDeck, self).addACard(Card(suite, value+1))
+        # for suite in [Suites.SPADE, Suites.CLUB, Suites.DIAMOND, Suites.HEART]:
+        #     for value in range(13):
+        #         super(FullDeck, self).addACard(Card(suite, value+1))
+        self.cards = [Card(suite, value)
+                      for suite in [Suites.SPADE, Suites.CLUB,
+                                    Suites.DIAMOND, Suites.HEART]
+                      for value in range(1,14)]
