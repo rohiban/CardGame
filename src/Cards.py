@@ -58,8 +58,8 @@ class Card(object):
 
 
 class SetOfCards(object):
-    def __init__(self):
-        self.cards = []
+    def __init__(self, c=None):
+        self.cards = c if c else []
 
     def cardCount(self):
         return len(self.cards)
@@ -74,7 +74,7 @@ class SetOfCards(object):
         if count == 1:
             return self.drawACard()
         else:
-            return [self.drawACard() for i in range(count)]
+            return SetOfCards([self.drawACard() for i in range(count)])
             # myCards = []
             # for i in range(count):
             #     myCards.append(self.drawACard())
@@ -156,8 +156,8 @@ class SetOfCards(object):
 
 
 class Hand(SetOfCards):
-    def __init__(self):
-        super(Hand, self).__init__()
+    def __init__(self, c=None):
+        super(Hand, self).__init__(c)
 
     def leadingSuite(self):
         return self.cards[0].getSuite()
@@ -194,12 +194,13 @@ class Hand(SetOfCards):
 
 class FullDeck(SetOfCards):
     def __init__(self):
-        self.no_of_cards = 52
-        super(FullDeck, self).__init__()
+        # self.no_of_cards = 52
+        # super(FullDeck, self).__init__()
         # for suite in [Suites.SPADE, Suites.CLUB, Suites.DIAMOND, Suites.HEART]:
         #     for value in range(13):
         #         super(FullDeck, self).addACard(Card(suite, value+1))
-        self.cards = [Card(suite, value)
+        deck = [Card(suite, value)
                       for suite in [Suites.SPADE, Suites.CLUB,
                                     Suites.DIAMOND, Suites.HEART]
                       for value in range(1,14)]
+        super(FullDeck, self).__init__(deck)

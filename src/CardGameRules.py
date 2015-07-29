@@ -142,10 +142,10 @@ class GadhaLotanRules(CardGameRules):
 
 
 class RummyRules(CardGameRules):
-    def __init__(self, card):
+    def __init__(self):
         super(RummyRules, self).__init__()
-        self.startCard = None
-        self.trumpSuite = ""
+        # self.startCard = None
+        self.trumpSuite = None
 
     def setTrump(self, suite):
         self.trumpSuite = suite
@@ -154,7 +154,7 @@ class RummyRules(CardGameRules):
         return self.trumpSuite
 
     def startingCard(self):
-        return self.startCard
+        return None
 
     def isAceMax(self):
         return True
@@ -177,11 +177,7 @@ class RummyRules(CardGameRules):
                     return True
                 if right.getSuite() == self.trumpSuite:
                     return False
-
             return left.isHigherValue(right)
-
-    # def bestSuiteCriteria(self):
-    #     return BestCriteria.COUNT
 
     def bestSuite(self, cards):
         if self.criterion == BestCriteria.COUNT:
@@ -196,7 +192,11 @@ class RummyRules(CardGameRules):
             return None
 
         for x, suite in sorted(suiteList, reverse=True):
-            return suite
+            return suite if x else self.trumpSuite
+            # if x == 0:  # if only trump cards are left in hand
+            #     return self.trumpSuite
+            # else:
+            #     return suite
 
             # maxVal = 0
         # winSuite = ""
@@ -238,7 +238,7 @@ class RummyRules(CardGameRules):
         return 4
 
     def maxCountAfterDealing(self):
-        return 13
+        return 12
 
     def printIt(self):
         if self.isAceMax():
@@ -246,7 +246,6 @@ class RummyRules(CardGameRules):
         else:
             aceRule = "Min"
 
-        print "Starting card is %s" % self.startCard.toString()
         print "Best suite criteria is %s" % self.criterion
         print "Trump applicable = %r, and Ace is considered %s" %(self.isTrumpApplicable(), aceRule)
         print "Next hand start by : %s, Next hand dealer : %s" %(self.whoStartsNextHand(), self.whoDealsNextHand())

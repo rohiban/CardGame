@@ -13,6 +13,7 @@ class Player(object):
     def isSame(self, p):
         return self.name == p.name
 
+
 class CardPlayer(Player):
     def __init__(self, name):
         super(CardPlayer, self).__init__(name)
