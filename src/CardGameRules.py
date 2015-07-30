@@ -26,9 +26,6 @@ class GameRules(object):
     def __init__(self):
         pass
 
-    # def printIt(self):
-    #     pass
-
 
 class CardGameRules(GameRules):
     def __init__(self):
@@ -80,9 +77,6 @@ class CardGameRules(GameRules):
                 startPos += 1
         return -1
 
-    # def printIt(self):
-    #     pass
-
 
 class GadhaLotanRules(CardGameRules):
     def __init__(self):
@@ -122,32 +116,22 @@ class GadhaLotanRules(CardGameRules):
     def bestSuite(self, cards):
         if self.criterion == BestCriteria.COUNT:
             suiteList = [(cards.noOfCards(suite), suite)
-                          for suite in [Suites.SPADE, Suites.CLUB,
-                                        Suites.DIAMOND, Suites.HEART]]
+                         for suite in [Suites.SPADE, Suites.CLUB,
+                                       Suites.DIAMOND, Suites.HEART]]
         elif self.criterion == BestCriteria.VALUE:
             suiteList = [(cards.sumOfValue(suite), suite)
-                          for suite in [Suites.SPADE, Suites.CLUB,
-                                        Suites.DIAMOND, Suites.HEART]]
+                         for suite in [Suites.SPADE, Suites.CLUB,
+                                       Suites.DIAMOND, Suites.HEART]]
         else:
             return None
 
         for x, suite in sorted(suiteList, reverse=True):
             return suite
 
-        # winSuite = Suites.SPADE
-        # winCount = cards.noOfCards(winSuite)
-        # for s in [Suites.CLUB, Suites.DIAMOND, Suites.HEART]:
-        #     count = cards.noOfCards(s)
-        #     if winCount < count:
-        #         winCount = count
-        #         winSuite = s
-        # return winSuite
-
 
 class RummyRules(CardGameRules):
     def __init__(self):
         super(RummyRules, self).__init__()
-        # self.startCard = None
         self.trumpSuite = None
 
     def setTrump(self, suite):
@@ -200,33 +184,6 @@ class RummyRules(CardGameRules):
             #     return self.trumpSuite
             # else:
             #     return suite
-
-            # maxVal = 0
-        # winSuite = ""
-        # valOfSuites = []
-        #
-        # for suite in [Suites.SPADE, Suites.CLUB, Suites.DIAMOND, Suites.HEART]:
-        #     if self.criterion == BestCriteria.COUNT:
-        #         val = cards.noOfCards(suite)
-        #     if self.criterion == BestCriteria.VALUE:
-        #         val = cards.sumOfValue(suite)
-        #
-        #     valOfSuites.append([suite, val])
-        #
-        #     if suite != self.trumpSuite:
-        #         if val > maxVal:
-        #             winSuite, maxVal = suite, val
-        #
-        # return winSuite
-
-#	def startingPlayerPos(self, allPlayers):
-#		startPos = 0
-#		for p in allPlayers:
-#			if p.hasCard(self.startCard):
-#				return startPos
-#			else:
-#				startPos += 1
-#		return startPos
 
     def isTrumpApplicable(self):
         return True
