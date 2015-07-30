@@ -1,4 +1,5 @@
 import random
+from __builtin__ import int
 
 __author__ = 'rbansal'
 
@@ -44,17 +45,23 @@ class Card(object):
     def isHigherValue(self, card):
         return self.value > card.value
 
-#	def __cmp__(self, other):
-#		return self.value.__cmp__(other.value)
-
     def isAce(self):
         return self.value == 1
 
-    def printIt(self):
-        print "(%s,%s)" %(self.suite, self.label)
+    # def printIt(self):
+    #     print "(%s,%s)" %(self.suite, self.label)
 
-    def toString(self):
-        return "(" + self.suite + "," + self.label + ")"
+    # def toString(self):
+    #     return "(" + self.suite + "," + self.label + ")"
+
+    def __cmp__(self, other):
+        return int.__cmp__(self.value, other.value)
+
+    def __str__(self):
+        return "(" + self.suite + ", " + self.label + ")"
+
+    def __unicode__(self):
+        return self.__str__()
 
 
 class SetOfCards(object):
@@ -101,10 +108,22 @@ class SetOfCards(object):
             # else:
             #     i += 1
 
-    def throwAMaxCard(self, ofSuite):
+    def getMaxCard(self, ofSuite):
+        # get all the cards of the suite
+        suiteCards = [card for card in self.cards if card.getSuite() == ofSuite]
+
+        # sort them in descending order
+
+        # return the first one
         pass
 
-    def throwAMinCard(self, ofSuite):
+    def getMinCard(self, ofSuite):
+        # get all the cards of the suite
+        suiteCards = [card for card in self.cards if card.getSuite() == ofSuite]
+
+        # sort them in ascending order
+
+        # return the first one
         pass
 
     def shuffle(self):
@@ -142,25 +161,33 @@ class SetOfCards(object):
         # return val
 
     def bestSuite(self, rules):
-
         pass
 
-    def toString(self):
+    # def toString(self):
+    #     s = ""
+    #     for card in self.cards:
+    #         s += card.toString()
+    #     return s
+
+    # def printIt(self):
+    #     print self.toString()
+
+    def __str__(self):
         s = ""
         for card in self.cards:
-            s += card.toString()
+            s += "%s" %card
         return s
 
-    def printIt(self):
-        print self.toString()
+    def __unicode__(self):
+        return self.__str__()
 
 
 class Hand(SetOfCards):
     def __init__(self, c=None):
         super(Hand, self).__init__(c)
 
-    def leadingSuite(self):
-        return self.cards[0].getSuite()
+    # def leadingSuite(self):
+    #     return self.cards[0].getSuite()
 
 #	def winningCard(self, rules):
 #		winner = self.cards[0]
@@ -173,23 +200,23 @@ class Hand(SetOfCards):
 #			i += 1
 #		return winner
 
-    def winningCardPos(self, rules):
-        i = 0
-        winPos = 0
-        for card in self.cards:
-            if i == 0:
-                winner, winPos = card, i
-            else:
-                if rules.rankFunction(card, winner):
-                    winner, winPos = card, i
-            i += 1
-        return winPos
+    # def winningCardPos(self, rules):
+    #     i = 0
+    #     winPos = 0
+    #     for card in self.cards:
+    #         if i == 0:
+    #             winner, winPos = card, i
+    #         else:
+    #             if rules.rankFunction(card, winner):
+    #                 winner, winPos = card, i
+    #         i += 1
+    #     return winPos
 
-    def getBottomCard(self):
-        return self.cards[0]
-
-    def getTopCard(self):
-        return self.cards[self.cardCount()-1]
+    # def getBottomCard(self):
+    #     return self.cards[0]
+    #
+    # def getTopCard(self):
+    #     return self.cards[self.cardCount()-1]
 
 
 class FullDeck(SetOfCards):

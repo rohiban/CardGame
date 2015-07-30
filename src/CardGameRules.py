@@ -23,8 +23,11 @@ class CardDistribution(object):
 
 
 class GameRules(object):
-    def printIt(self):
+    def __init__(self):
         pass
+
+    # def printIt(self):
+    #     pass
 
 
 class CardGameRules(GameRules):
@@ -77,8 +80,8 @@ class CardGameRules(GameRules):
                 startPos += 1
         return -1
 
-    def printIt(self):
-        pass
+    # def printIt(self):
+    #     pass
 
 
 class GadhaLotanRules(CardGameRules):
@@ -240,12 +243,12 @@ class RummyRules(CardGameRules):
     def maxCountAfterDealing(self):
         return 12
 
-    def printIt(self):
-        if self.isAceMax():
-            aceRule = "Max"
-        else:
-            aceRule = "Min"
-
-        print "Best suite criteria is %s" % self.criterion
-        print "Trump applicable = %r, and Ace is considered %s" %(self.isTrumpApplicable(), aceRule)
-        print "Next hand start by : %s, Next hand dealer : %s" %(self.whoStartsNextHand(), self.whoDealsNextHand())
+    # def printIt(self):
+    #     if self.isAceMax():
+    #         aceRule = "Max"
+    #     else:
+    #         aceRule = "Min"
+    #
+    #     print "Best suite criteria is %s" % self.criterion
+    #     print "Trump applicable = %r, and Ace is considered %s" %(self.isTrumpApplicable(), aceRule)
+    #     print "Next hand start by : %s, Next hand dealer : %s" %(self.whoStartsNextHand(), self.whoDealsNextHand())

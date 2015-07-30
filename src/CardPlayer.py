@@ -7,12 +7,23 @@ class Player(object):
     def __init__(self, name):
         self.name = name
 
-    def printIt(self):
-        print "%s" % self.name
+    def getName(self):
+        return self.name
 
-    def isSame(self, p):
-        return self.name == p.name
+    # def printIt(self):
+    #     print "%s" % self.name
 
+    def __str__(self):
+        return "%s" % self.name
+
+    def __unicode__(self):
+        return self.__str__()
+
+    # def isSame(self, p):
+    #     return self.name == p.name
+
+    def __eq__(self, other):
+        return self.name.__eq__(other.name)
 
 class CardPlayer(Player):
     def __init__(self, name):
@@ -46,8 +57,8 @@ class CardPlayer(Player):
     def hasCardOfSuite(self, ofSuite):
         return self.cards.noOfCards(ofSuite) > 0
 
-    def printYourHand(self):
-        print self.cards.toString()
+    # def printYourHand(self):
+    #     print self.cards.toString()
 
     def noOfCardsInHand(self):
         return self.cards.cardCount()

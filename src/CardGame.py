@@ -20,12 +20,37 @@ class Game(object):
     #     return self.rules
 
 
+class PlayerPoint(object):
+    def __init__(self, p, pts=0):
+        self.player = p
+        self.points = pts
+
+    # def printIt(self):
+    #     print "%s has %d points" % (self.player.getName(), self.points)
+
+    def __str__(self):
+        return "%s [%d points]" % (self.player, self.points)
+
+    def __unicode__(self):
+        return self.__str__()
+
+    def __cmp__(self, other):
+        return int.__cmp__(self.points, other.points)
+
+    def addPoints(self, pts):
+        self.points += pts
+
+    def isForPlayer(self, p):
+        return self.player == p
+
+
 class CardGame(Game):
     def __init__(self, players, cardDeck, rules):
         super(CardGame, self).__init__(players)
         self.card_deck = cardDeck
         self.rules = rules
         self.unused_cards = None
+        self.pointsTable = None
 
     # simple getter, do we need it ?
     def getRules(self):
@@ -63,10 +88,18 @@ class CardGame(Game):
     def initialize(self, cardsPerPlayer):
         self.shuffleTheDeck()
         self.dealCards(cardsPerPlayer)
-        # self.dealCards(floor(self.card_deck.cardCount() / len(self.players)))
 
     def beginPlay(self):
-        return NotImplemented
+        # initialize the points table
+        self.pointsTable = []
+        for p in self.players:
+            self.pointsTable.append(PlayerPoint(p, 0))
+
+    def updatePoints(self, player, pts=1):
+        for p_pt in self.pointsTable:
+            if p_pt.isForPlayer(player):
+                p_pt.addPoints(pts)
+                break
 
     # def nextPlayerIndex(self, currIndex, delta=1):
     #     currIndex += delta
@@ -77,7 +110,7 @@ class CardGame(Game):
     # get the next player given a player
     def nextPlayer(self, p):
         for i, player in enumerate(self.players):
-            if p.isSame(player):
+            if player == p:
                 return self.players[(i + 1) % self.no_of_players]
 
         return None
@@ -105,6 +138,9 @@ class GadhaLotan(CardGame):
         return None
 
     def beginPlay(self):
+        # call the base class' method first
+        super(GadhaLotan, self).beginPlay()
+
         no_of_cards = self.rules.maxCountAfterDealing()
         self.initialize(no_of_cards)
 
@@ -177,6 +213,7 @@ class GadhaLotan(CardGame):
 
             # for debugging
             # playedHand.printIt()
+            # print "%s" %playedHand
 
             if loading:
                 # loaded player needs to pick up the hand
@@ -217,7 +254,14 @@ class Rummy(CardGame):
     def getTrumpSuite(self):
         return self.trumpSuite
 
+    def theWinner(self):
+        sorted_list = sorted(self.pointsTable, reverse=True)
+        return sorted_list[0]
+
     def beginPlay(self):
+        # call the base class' method first
+        super(Rummy, self).beginPlay()
+
         trumpDeclared = False
 
         no_of_cards = self.rules.maxCountAfterDealing()
@@ -228,19 +272,15 @@ class Rummy(CardGame):
 
         # for debugging
         for p in self.players:
-            p.printIt()
-            p.printYourHand()
+            print "%s" % p
+            print "%s" % p.getCardsInHand()
 
         # select randomly a player to start the game
-        # startPos = self.rules.startingPlayerPos(self.players)
-        # p = self.players[startPos]
         p = self.players[random.randint(0, len(self.players)-1)]
 
         # for debugging
         # print "starting player ... ",
         # p.printIt()
-
-        # suite = self.rules.startingCard().getSuite()
 
         for hand in range(no_of_cards):
             # play a new hand
@@ -250,7 +290,6 @@ class Rummy(CardGame):
             for i in range(self.no_of_players):
 
                 if i == 0:  # first player in a hand
-
                     suite = p.selectASuite(self.rules)
                     card = p.playACard(suite)
                     # print "%s" % suite
@@ -296,13 +335,25 @@ class Rummy(CardGame):
                 p = self.nextPlayer(p)
 
             # for debugging
-            playedHand.printIt()
+            # playedHand.printIt()
+            print "%s" % playedHand
 
             # determine the player starting the next hand
             (p, winningCard) = winners
 
+            # update the point tally for the player
+            self.updatePoints(p)
+
             # merge the played hand with the used card deck
             self.used_cards.mergeWith(playedHand)
+
+        # declare the winner
+        print "The Winner is ...",
+        print "%s" % self.theWinner()
+
+        # for debugging
+        # for p_pt in self.pointsTable:
+        #    print "%s" % p_pt
 
 
             #     if (hand == 0) & (i == 0):
